@@ -26,11 +26,20 @@ namespace DXExampleUpdater
             Logger.RegisterLogAction((s) => tbLog.AppendText(s));
         }
 
+        
         private async void btnRun_Click(object sender, RoutedEventArgs e)
         {
-            await new ExampleProcessor(tbId.Text).ProcessExample( );
+            await CreateInstance().PreProcessExample();
         }
 
-    
+        private ExampleProcessor CreateInstance()
+        {
+            return new ExampleProcessor(tbId.Text);
+        }
+
+        private void btnCommit_Click(object sender, RoutedEventArgs e)
+        {
+            CreateInstance().Commit(tbCommitMessage.Text);
+        }
     }
 }

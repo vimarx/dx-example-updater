@@ -15,15 +15,17 @@ namespace DXExampleUpdater
         public string BranchName { get; set; } = "18.1.4+";
 
         public string ExamplePath { get;  }
+        public GitUtils Git { get;  }
 
         public ExampleProcessor(string id)
         {
             Id = id.Trim().ToLower();
             ExamplePath = PathHelper.GetExamplePath(Id);
+            Git = new GitUtils(ExamplePath); ;
         }
 
      
-        public async Task ProcessExample()
+        public async Task PreProcessExample()
         {
             Logger.Log($"===Processing Example: {Id} ===");
             gitUri = await GetGitUri();
@@ -57,13 +59,21 @@ namespace DXExampleUpdater
 
         void CreateBranch()
         {
-            GitUtils.CreateSelectBranch(BranchName);
+            Git.CreateSelectBranch(BranchName);
         }
 
 
+        public void Commit(string message)
+        {
+            Git.Status();
+            Git.AddAll();
+            Git.Status();
+            Git.Commit(message);
+        }
+
         void CloneRepo()
         {
-            GitUtils.Clone(gitUri, ExamplePath);
+            Git.Clone(gitUri, ExamplePath);
             Logger.Log($"Cloned to {ExamplePath}");
         }
     }
